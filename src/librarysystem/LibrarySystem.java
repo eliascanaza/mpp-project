@@ -25,7 +25,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 	JPanel mainPanel;
 	JMenuBar menuBar;
     JMenu options;
-    JMenuItem login, allBookIds, allMemberIds; 
+    JMenuItem login, allBookIds, allMemberIds, checkoutBook; 
     String pathToImage;
     private boolean isInitialized = false;
     
@@ -89,9 +89,12 @@ public class LibrarySystem extends JFrame implements LibWindow {
  	   allBookIds.addActionListener(new AllBookIdsListener());
  	   allMemberIds = new JMenuItem("All Member Ids");
  	   allMemberIds.addActionListener(new AllMemberIdsListener());
+ 	   checkoutBook = new JMenuItem("Checkout Book");
+ 	   checkoutBook.addActionListener(new CheckoutBookListener());
  	   options.add(login);
  	   options.add(allBookIds);
  	   options.add(allMemberIds);
+ 	   options.add(checkoutBook);
     }
     
     class LoginListener implements ActionListener {
@@ -155,6 +158,37 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			//AllMemberIdsWindow.INSTANCE.setSize(660,500);
 			Util.centerFrameOnDesktop(AllMemberIdsWindow.INSTANCE);
 			AllMemberIdsWindow.INSTANCE.setVisible(true);
+			
+			
+		}
+    	
+    }
+    
+    class CheckoutBookListener implements ActionListener {
+
+    	@Override
+		public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			CheckoutBook.INSTANCE.init();
+			CheckoutBook.INSTANCE.pack();
+			CheckoutBook.INSTANCE.setVisible(true);
+			
+			
+			LibrarySystem.hideAllWindows();
+			AllBookIdsWindow.INSTANCE.init();
+			
+			List<String> ids = ci.allMemberIds();
+			Collections.sort(ids);
+			StringBuilder sb = new StringBuilder();
+			for(String s: ids) {
+				sb.append(s + "\n");
+			}
+			System.out.println(sb.toString());
+			//CheckoutBook.INSTANCE.setData(sb.toString());
+			CheckoutBook.INSTANCE.pack();
+			//AllMemberIdsWindow.INSTANCE.setSize(660,500);
+			Util.centerFrameOnDesktop(CheckoutBook.INSTANCE);
+			CheckoutBook.INSTANCE.setVisible(true);
 			
 			
 		}
