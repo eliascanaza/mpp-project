@@ -20,12 +20,13 @@ import business.SystemController;
 
 
 public class LibrarySystem extends JFrame implements LibWindow {
+	
 	ControllerInterface ci = new SystemController();
 	public final static LibrarySystem INSTANCE =new LibrarySystem();
 	JPanel mainPanel;
 	JMenuBar menuBar;
     JMenu options;
-    JMenuItem login, allBookIds, allMemberIds, checkoutBook; 
+    JMenuItem login, allBookIds, allMemberIds, checkoutBook, addBookCopy; 
     String pathToImage;
     private boolean isInitialized = false;
     
@@ -33,7 +34,9 @@ public class LibrarySystem extends JFrame implements LibWindow {
     	LibrarySystem.INSTANCE,
 		LoginWindow.INSTANCE,
 		AllMemberIdsWindow.INSTANCE,	
-		AllBookIdsWindow.INSTANCE
+		AllBookIdsWindow.INSTANCE,
+		AddBookCopy.INSTANCE,
+		CheckoutBook.INSTANCE
 	};
     	
 	public static void hideAllWindows() {
@@ -91,10 +94,14 @@ public class LibrarySystem extends JFrame implements LibWindow {
  	   allMemberIds.addActionListener(new AllMemberIdsListener());
  	   checkoutBook = new JMenuItem("Checkout Book");
  	   checkoutBook.addActionListener(new CheckoutBookListener());
+ 	   addBookCopy = new JMenuItem("Add Book Copy");
+ 	   addBookCopy.addActionListener(new AddBookCopyListener());
+ 	   
  	   options.add(login);
  	   options.add(allBookIds);
  	   options.add(allMemberIds);
  	   options.add(checkoutBook);
+ 	   options.add(addBookCopy);
     }
     
     class LoginListener implements ActionListener {
@@ -194,6 +201,37 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		}
     	
     }
+    
+    class AddBookCopyListener implements ActionListener {
+
+    	@Override
+		public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			AddBookCopy.INSTANCE.init();
+			AddBookCopy.INSTANCE.pack();
+			AddBookCopy.INSTANCE.setVisible(true);
+			
+			
+			LibrarySystem.hideAllWindows();
+			AllBookIdsWindow.INSTANCE.init();
+			
+			List<String> ids = ci.allMemberIds();
+			Collections.sort(ids);
+			StringBuilder sb = new StringBuilder();
+			for(String s: ids) {
+				sb.append(s + "\n");
+			}
+			System.out.println(sb.toString());
+			//CheckoutBook.INSTANCE.setData(sb.toString());
+			AddBookCopy.INSTANCE.pack();
+			//AllMemberIdsWindow.INSTANCE.setSize(660,500);
+			Util.centerFrameOnDesktop(AddBookCopy.INSTANCE);
+			AddBookCopy.INSTANCE.setVisible(true);
+			
+			
+		}
+    	
+    }
 
 	@Override
 	public boolean isInitialized() {
@@ -206,5 +244,6 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		isInitialized =val;
 		
 	}
-    
+	
+	private static final long serialVersionUID = 7507031264177216075L;
 }
