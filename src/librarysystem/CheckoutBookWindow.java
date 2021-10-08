@@ -75,9 +75,9 @@ public class CheckoutBookWindow extends JFrame implements LibWindow {
 	public void isInitialized(boolean val) {
 		isInitialized = val;
 	}
-	private JTextField messageBar = new JTextField();
 	public void clear() {
-		messageBar.setText("");
+		memberID.setText("");
+		isbn.setText("");
 	}
 	
 	/* This class is a singleton */

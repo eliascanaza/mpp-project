@@ -35,7 +35,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		LoginWindow.INSTANCE,
 		AllMemberIdsWindow.INSTANCE,	
 		AllBookIdsWindow.INSTANCE,
-		AddBookCopy.INSTANCE,
+		AddBookCopyWindow.INSTANCE,
 		CheckoutBookWindow.INSTANCE
 	};
     	
@@ -182,6 +182,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 				CheckoutBookWindow.INSTANCE.pack();
 				CheckoutBookWindow.INSTANCE.isInitialized(true);
 			}
+			CheckoutBookWindow.INSTANCE.clear();
 			CheckoutBookWindow.INSTANCE.setVisible(true);
 			
 			Util.centerFrameOnDesktop(CheckoutBookWindow.INSTANCE);
@@ -195,14 +196,14 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		public void actionPerformed(ActionEvent e) {
     		LibrarySystem.hideAllWindows();
     		
-    		if(!AddBookCopy.INSTANCE.isInitialized()) {
-    			AddBookCopy.INSTANCE.init();
-    			AddBookCopy.INSTANCE.pack();
-    			AddBookCopy.INSTANCE.isInitialized(true);
+    		if(!AddBookCopyWindow.INSTANCE.isInitialized()) {
+    			AddBookCopyWindow.INSTANCE.init();
+    			AddBookCopyWindow.INSTANCE.pack();
+    			AddBookCopyWindow.INSTANCE.isInitialized(true);
 			}
-    		AddBookCopy.INSTANCE.clear();
-    		AddBookCopy.INSTANCE.setVisible(true);
-    		Util.centerFrameOnDesktop(AddBookCopy.INSTANCE);
+    		AddBookCopyWindow.INSTANCE.clear();
+    		AddBookCopyWindow.INSTANCE.setVisible(true);
+    		Util.centerFrameOnDesktop(AddBookCopyWindow.INSTANCE);
 		}
     	
     }

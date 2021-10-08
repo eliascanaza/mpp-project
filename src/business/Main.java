@@ -11,7 +11,7 @@ public class Main {
 		System.out.println(allWhoseZipContains3());
 		System.out.println(allHavingOverdueBook());
 		System.out.println(allHavingMultipleAuthors());
-		System.out.println(allBookCopies());
+		System.out.println(allBook());
 	}
 	//Returns a list of all ids of LibraryMembers whose zipcode contains the digit 3
 	public static List<String> allWhoseZipContains3() {
@@ -30,13 +30,14 @@ public class Main {
 		return listZip;
 	}
 	//Returns a list of all book copies
-		public static List<BookCopy> allBookCopies() {
-			DataAccess da = new DataAccessFacade();
-			Collection<BookCopy> copies = da.readBookCopyMap().values();
-			List<BookCopy> copy = new ArrayList<>();
-			copy.addAll(copies);
-			return copy;
-		}
+	public static List<Book> allBook() {
+		DataAccess da = new DataAccessFacade();
+		Collection<Book> copies = da.readBooksMap().values();
+		List<Book> copy = new ArrayList<>();
+		copy.addAll(copies);
+		return copy;
+	}
+	
 	//Returns a list of all ids of  LibraryMembers that have an overdue book
 	public static List<String> allHavingOverdueBook() {
 		DataAccess da = new DataAccessFacade();

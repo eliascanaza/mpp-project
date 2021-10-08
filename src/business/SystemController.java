@@ -106,9 +106,6 @@ public class SystemController implements ControllerInterface {
 		
 		Book book = getBook(bookID);
 		
-		if(book == null)
-			throw new LibrarySystemException("Book ID is not found - null.");
-		
 		BookCopy copy = book.getNextAvailableCopy();
 		LibraryMember lMember = getLibraryMember(memberID);
 		
@@ -118,7 +115,7 @@ public class SystemController implements ControllerInterface {
 		int maxCheckout = book.getMaxCheckoutLength();
 		
 		if(!book.isAvailable()) 
-			throw new LibrarySystemException("Book ID is not Available.");
+			throw new LibrarySystemException("Book is not Available.");
 		
 		CheckoutRecord record = lMember.checkout(copy, LocalDate.now(), LocalDate.now().plusDays(maxCheckout));
 		da.addCheckoutBook(record);
@@ -134,8 +131,8 @@ public class SystemController implements ControllerInterface {
 			throw new LibrarySystemException("Book ID is not found.");
 		
 		Book book = getBook(id);
-		BookCopy copy = new BookCopy(book, 1, true);
-		da.saveBookCopy(copy);
+		book.addCopy();
+		da.saveBook(book);
 		System.out.println("Book Copy saved!");
 	}
 }

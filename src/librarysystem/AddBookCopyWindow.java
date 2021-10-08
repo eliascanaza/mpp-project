@@ -20,9 +20,9 @@ import business.ControllerInterface;
 import business.LibrarySystemException;
 import business.SystemController;
 
-public class AddBookCopy extends JFrame implements LibWindow {
+public class AddBookCopyWindow extends JFrame implements LibWindow {
 
-	public static final AddBookCopy INSTANCE = new AddBookCopy();
+	public static final AddBookCopyWindow INSTANCE = new AddBookCopyWindow();
 	
 	private boolean isInitialized = false;
 	private ControllerInterface ci;
@@ -50,13 +50,12 @@ public class AddBookCopy extends JFrame implements LibWindow {
 	public void isInitialized(boolean val) {
 		isInitialized = val;
 	}
-	private JTextField messageBar = new JTextField();
 	public void clear() {
-		messageBar.setText("");
+		bookID.setText("");
 	}
 	
 	/* This class is a singleton */
-    private AddBookCopy () {}
+    private AddBookCopyWindow () {}
     
     public void init() {   
     		initInstances();
