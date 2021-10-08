@@ -26,7 +26,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 	JPanel mainPanel;
 	JMenuBar menuBar;
     JMenu options;
-    JMenuItem login, allBookIds, allMemberIds, checkoutBook, addBookCopy; 
+    JMenuItem login, allBookIds, allMemberIds, addLibraryMember, checkoutBook, addBookCopy; 
     String pathToImage;
     private boolean isInitialized = false;
     
@@ -36,7 +36,8 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		AllMemberIdsWindow.INSTANCE,	
 		AllBookIdsWindow.INSTANCE,
 		AddBookCopyWindow.INSTANCE,
-		CheckoutBookWindow.INSTANCE
+		CheckoutBookWindow.INSTANCE,
+		AddLibraryMemberWindow.INSTANCE
 	};
     	
 	public static void hideAllWindows() {
@@ -92,6 +93,8 @@ public class LibrarySystem extends JFrame implements LibWindow {
  	   allBookIds.addActionListener(new AllBookIdsListener());
  	   allMemberIds = new JMenuItem("All Member Ids");
  	   allMemberIds.addActionListener(new AllMemberIdsListener());
+ 	   addLibraryMember = new JMenuItem("Add Library Member");
+ 	   addLibraryMember.addActionListener(new AddLibraryMemberListener());
  	   checkoutBook = new JMenuItem("Checkout Book");
  	   checkoutBook.addActionListener(new CheckoutBookListener());
  	   addBookCopy = new JMenuItem("Add Book Copy");
@@ -100,6 +103,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
  	   options.add(login);
  	   options.add(allBookIds);
  	   options.add(allMemberIds);
+ 	   options.add(addLibraryMember);
  	   options.add(checkoutBook);
  	   options.add(addBookCopy);
     }
@@ -167,6 +171,25 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			AllMemberIdsWindow.INSTANCE.setVisible(true);
 			
 			
+		}
+    	
+    }
+    
+    class AddLibraryMemberListener implements ActionListener {
+
+    	@Override
+		public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			
+			if(!AddLibraryMemberWindow.INSTANCE.isInitialized()) {
+				AddLibraryMemberWindow.INSTANCE.init();
+				AddLibraryMemberWindow.INSTANCE.pack();
+				AddLibraryMemberWindow.INSTANCE.isInitialized(true);
+			}
+			AddLibraryMemberWindow.INSTANCE.clear();
+			AddLibraryMemberWindow.INSTANCE.setVisible(true);
+			
+			Util.centerFrameOnDesktop(AddLibraryMemberWindow.INSTANCE);
 		}
     	
     }
