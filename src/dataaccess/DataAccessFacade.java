@@ -11,13 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import business.Book;
+import business.BookCopy;
 import business.CheckoutRecord;
 import business.LibraryMember;
 
 public class DataAccessFacade implements DataAccess {
 	
 	enum StorageType {
-		BOOKS, MEMBERS, USERS, CHECKOUTBOOK;
+		BOOKS, MEMBERS, USERS, CHECKOUTBOOK, BOOKCOPY;
 	}
 	
 	public static final String OUTPUT_DIR = System.getProperty("user.dir") 
@@ -62,6 +63,10 @@ public class DataAccessFacade implements DataAccess {
 		return (HashMap<String, CheckoutRecord>)readFromStorage(StorageType.CHECKOUTBOOK);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public HashMap<String, BookCopy> readBookCopyMap() {
+		return (HashMap<String, BookCopy>)readFromStorage(StorageType.BOOKCOPY);
+	}
 	/////load methods - these place test data into the storage area
 	///// - used just once at startup  
 	
@@ -71,6 +76,13 @@ public class DataAccessFacade implements DataAccess {
 		bookList.forEach(book -> books.put(book.getIsbn(), book));
 		saveToStorage(StorageType.BOOKS, books);
 	}
+	
+	static void loadBookCopyMap(List<BookCopy> bookList) {
+		HashMap<String, BookCopy> copies = new HashMap<String, BookCopy>();
+		bookList.forEach(copy -> copies.put(copy.getBook().getIsbn()+"-"+copy.getCopyNum(), copy));
+		saveToStorage(StorageType.BOOKCOPY, copies);
+	}
+	
 	static void loadUserMap(List<User> userList) {
 		HashMap<String, User> users = new HashMap<String, User>();
 		userList.forEach(user -> users.put(user.getId(), user));
@@ -182,5 +194,14 @@ public class DataAccessFacade implements DataAccess {
 		books.put(book.getIsbn(), book);
 		saveToStorage(StorageType.BOOKS, books);
 	}
+
+	@Override
+	public void saveBookCopy(BookCopy copy) {
+		HashMap<String, BookCopy> copies = readBookCopyMap();
+		copies.put(copy.getBook().getIsbn()+"-"+copy.getCopyNum(), copy);
+		saveToStorage(StorageType.BOOKCOPY, copies);
+	}
+
+	
 	
 }

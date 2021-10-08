@@ -122,16 +122,20 @@ public class SystemController implements ControllerInterface {
 		
 		CheckoutRecord record = lMember.checkout(copy, LocalDate.now(), LocalDate.now().plusDays(maxCheckout));
 		da.addCheckoutBook(record);
-		
-//		List<Book> listBook = allBook();
-//		for(int i = 0; i < listBook.size(); i++) {
-//			if(listBook.get(i).getIsbn().equals(book.getIsbn())) {
-//				listBook.set(i, book);
-//				break;
-//			}
-//		}
-		
 		da.saveBook(book);
+		System.out.println("CheckoutBook saved!");
 		return record;
+	}
+	
+	@Override
+	public void addBookCopy(String id) throws LibrarySystemException{
+		DataAccess da = new DataAccessFacade();
+		if(!searchBook(id))
+			throw new LibrarySystemException("Book ID is not found.");
+		
+		Book book = getBook(id);
+		BookCopy copy = new BookCopy(book, 1, true);
+		da.saveBookCopy(copy);
+		System.out.println("Book Copy saved!");
 	}
 }

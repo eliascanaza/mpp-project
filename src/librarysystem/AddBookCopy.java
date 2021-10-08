@@ -16,11 +16,16 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import business.ControllerInterface;
+import business.LibrarySystemException;
+import business.SystemController;
+
 public class AddBookCopy extends JFrame implements LibWindow {
 
 	public static final AddBookCopy INSTANCE = new AddBookCopy();
 	
 	private boolean isInitialized = false;
+	private ControllerInterface ci;
 	
 	private JPanel mainPanel;
 	private JPanel upperHalf;
@@ -32,7 +37,7 @@ public class AddBookCopy extends JFrame implements LibWindow {
 	private JPanel lowerPanel;
 	private JPanel leftTextPanel;
 	
-	private JTextField memberID;
+	private JTextField bookID;
 	private JLabel label;
 	private JButton checkoutButton;
 	
@@ -53,7 +58,8 @@ public class AddBookCopy extends JFrame implements LibWindow {
 	/* This class is a singleton */
     private AddBookCopy () {}
     
-    public void init() {     		
+    public void init() {   
+    		initInstances();
     		mainPanel = new JPanel();
     		defineUpperHalf();
     		defineMiddleHalf();
@@ -72,6 +78,11 @@ public class AddBookCopy extends JFrame implements LibWindow {
 
     	
     }
+    
+    private void initInstances() {
+    	ci = new SystemController();
+	}
+    
     private void defineUpperHalf() {
     		
     		upperHalf = new JPanel();
@@ -112,11 +123,8 @@ public class AddBookCopy extends JFrame implements LibWindow {
     		intPanel.add(checkoutLabel, BorderLayout.CENTER);
     		topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
     		topPanel.add(intPanel);
-    		
     	}
-    	
-    	
-    	
+    
     	private void defineMiddlePanel() {
     		middlePanel=new JPanel();
     		middlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -127,7 +135,7 @@ public class AddBookCopy extends JFrame implements LibWindow {
     		lowerPanel = new JPanel();
     		lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.Y_AXIS));
     		checkoutButton = new JButton("Add book copy");
-    		validaCheckoutBookButtonListener(checkoutButton);
+    		addBookCopyButtonListener(checkoutButton);
     		lowerPanel.add(checkoutButton);
     	}
 
@@ -138,10 +146,10 @@ public class AddBookCopy extends JFrame implements LibWindow {
     		topText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
     		bottomText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));		
     		
-    		memberID = new JTextField(10);
+    		bookID = new JTextField(10);
     		label = new JLabel("ISBN");
     		label.setFont(Util.makeSmallFont(label.getFont()));
-    		topText.add(memberID);
+    		topText.add(bookID);
     		bottomText.add(label);
     		
     		leftTextPanel = new JPanel();
@@ -157,10 +165,23 @@ public class AddBookCopy extends JFrame implements LibWindow {
     		});
     	}
     	
-    	private void validaCheckoutBookButtonListener(JButton butn) {
+    	private void addBookCopyButtonListener(JButton butn) {
     		butn.addActionListener(evt -> {
-    			JOptionPane.showMessageDialog(this,"Successful Validation");
+    			try {
+					ci.addBookCopy(getISBN());
+					displayMessage("Add Copy saved!");
+				} catch (LibrarySystemException e) {
+					displayMessage(e.getMessage());
+				}
     		});
+    	}
+    	
+    	private void displayMessage(String message) {
+    		JOptionPane.showMessageDialog(INSTANCE,message);
+    	}
+    	
+    	private String getISBN() {
+    		return bookID.getText();
     	}
 	
     	private static final long serialVersionUID = -4881509539494674087L;

@@ -32,6 +32,7 @@ public class TestData {
 		td.libraryMemberData();
 		td.userData();
 		td.checkoutBook();
+		td.bookCopy();
 		DataAccess da = new DataAccessFacade();
 		System.out.println(da.readBooksMap());
 		System.out.println(da.readUserMap());
@@ -49,6 +50,10 @@ public class TestData {
 	
 	public void checkoutBook() {
 		DataAccessFacade.loadCheckoutBookMap(allCheckoutBooks);
+	}
+	
+	public void bookCopy() {
+		DataAccessFacade.loadBookCopyMap(allBookCopies);
 	}
 	
 	public void userData() {
@@ -105,6 +110,13 @@ public class TestData {
 			add(new Book("28-12331", "Antartica", 7, Arrays.asList(allAuthors.get(2))));
 			add(new Book("99-22223", "Thinking Java", 21, Arrays.asList(allAuthors.get(3))));
 			add(new Book("48-56882", "Jimmy's First Day of School", 7, Arrays.asList(allAuthors.get(4))));		
+		}
+	};
+	
+	@SuppressWarnings("serial")
+	List<BookCopy> allBookCopies = new ArrayList<BookCopy>() {
+		{
+			add(new BookCopy(new Book("23-11451", "The Big Fish", 21, Arrays.asList(allAuthors.get(0), allAuthors.get(1))), 2, true));		
 		}
 	};
 	

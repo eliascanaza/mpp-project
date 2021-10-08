@@ -8,6 +8,7 @@ public interface ControllerInterface {
 	public List<String> allBookIds();
 	public boolean searchMember(String id);
 	public boolean searchBook(String id);
+	public void addBookCopy(String id) throws LibrarySystemException;
 	public List<CheckoutRecord> allCheckoutBook();
 	public List<Book> allBook();
 	public CheckoutRecord checkoutBook(String memberID, String bookID) throws LibrarySystemException;

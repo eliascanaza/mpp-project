@@ -193,29 +193,16 @@ public class LibrarySystem extends JFrame implements LibWindow {
 
     	@Override
 		public void actionPerformed(ActionEvent e) {
-			LibrarySystem.hideAllWindows();
-			AddBookCopy.INSTANCE.init();
-			AddBookCopy.INSTANCE.pack();
-			AddBookCopy.INSTANCE.setVisible(true);
-			
-			
-			LibrarySystem.hideAllWindows();
-			AddBookCopy.INSTANCE.init();
-			
-			List<String> ids = ci.allMemberIds();
-			Collections.sort(ids);
-			StringBuilder sb = new StringBuilder();
-			for(String s: ids) {
-				sb.append(s + "\n");
+    		LibrarySystem.hideAllWindows();
+    		
+    		if(!AddBookCopy.INSTANCE.isInitialized()) {
+    			AddBookCopy.INSTANCE.init();
+    			AddBookCopy.INSTANCE.pack();
+    			AddBookCopy.INSTANCE.isInitialized(true);
 			}
-			System.out.println(sb.toString());
-			//CheckoutBook.INSTANCE.setData(sb.toString());
-			AddBookCopy.INSTANCE.pack();
-			//AllMemberIdsWindow.INSTANCE.setSize(660,500);
-			Util.centerFrameOnDesktop(AddBookCopy.INSTANCE);
-			AddBookCopy.INSTANCE.setVisible(true);
-			
-			
+    		AddBookCopy.INSTANCE.clear();
+    		AddBookCopy.INSTANCE.setVisible(true);
+    		Util.centerFrameOnDesktop(AddBookCopy.INSTANCE);
 		}
     	
     }
