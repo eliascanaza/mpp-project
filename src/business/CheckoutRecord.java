@@ -2,11 +2,11 @@ package business;
 
 import java.io.Serializable;
 
-public class CheckoutBook implements Serializable{
-	private CheckoutRecordEntry checkoutEntry;
+public class CheckoutRecord implements Serializable{
+	private CheckoutEntry checkoutEntry;
 	private String memberId;
 	
-	public CheckoutBook(String memberId, CheckoutRecordEntry checkoutEntry) {
+	public CheckoutRecord(String memberId, CheckoutEntry checkoutEntry) {
 		super();
 		this.memberId = memberId;
 		this.checkoutEntry = checkoutEntry;
@@ -20,11 +20,11 @@ public class CheckoutBook implements Serializable{
 		this.memberId = memberId;
 	}
 
-	public CheckoutRecordEntry getCheckoutEntry() {
+	public CheckoutEntry getCheckoutEntry() {
 		return checkoutEntry;
 	}
 
-	public void setCheckoutEntry(CheckoutRecordEntry checkoutEntry) {
+	public void addEntry(CheckoutEntry checkoutEntry) {
 		this.checkoutEntry = checkoutEntry;
 	}
 	

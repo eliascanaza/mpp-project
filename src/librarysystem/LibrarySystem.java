@@ -176,28 +176,15 @@ public class LibrarySystem extends JFrame implements LibWindow {
     	@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
-			CheckoutBookWindow.INSTANCE.init();
-			CheckoutBookWindow.INSTANCE.pack();
-			CheckoutBookWindow.INSTANCE.setVisible(true);
 			
-			
-			LibrarySystem.hideAllWindows();
-			AllBookIdsWindow.INSTANCE.init();
-			
-			List<String> ids = ci.allMemberIds();
-			Collections.sort(ids);
-			StringBuilder sb = new StringBuilder();
-			for(String s: ids) {
-				sb.append(s + "\n");
+			if(!CheckoutBookWindow.INSTANCE.isInitialized()) {
+				CheckoutBookWindow.INSTANCE.init();
+				CheckoutBookWindow.INSTANCE.pack();
+				CheckoutBookWindow.INSTANCE.isInitialized(true);
 			}
-			System.out.println(sb.toString());
-			//CheckoutBook.INSTANCE.setData(sb.toString());
-			CheckoutBookWindow.INSTANCE.pack();
-			//AllMemberIdsWindow.INSTANCE.setSize(660,500);
-			Util.centerFrameOnDesktop(CheckoutBookWindow.INSTANCE);
 			CheckoutBookWindow.INSTANCE.setVisible(true);
 			
-			
+			Util.centerFrameOnDesktop(CheckoutBookWindow.INSTANCE);
 		}
     	
     }
@@ -213,7 +200,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			
 			
 			LibrarySystem.hideAllWindows();
-			AllBookIdsWindow.INSTANCE.init();
+			AddBookCopy.INSTANCE.init();
 			
 			List<String> ids = ci.allMemberIds();
 			Collections.sort(ids);

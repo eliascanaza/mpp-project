@@ -6,17 +6,13 @@ import java.io.Serializable;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import business.Book;
-import business.BookCopy;
-import business.CheckoutBook;
-import business.CheckoutRecordEntry;
+import business.CheckoutRecord;
 import business.LibraryMember;
-
 
 public class DataAccessFacade implements DataAccess {
 	
@@ -60,10 +56,10 @@ public class DataAccessFacade implements DataAccess {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public HashMap<String, CheckoutBook> readCheckoutBookMap() {
+	public HashMap<String, CheckoutRecord> readCheckoutBookMap() {
 		//Returns a Map with name/value pairs being
 		//   userId -> User
-		return (HashMap<String, CheckoutBook>)readFromStorage(StorageType.CHECKOUTBOOK);
+		return (HashMap<String, CheckoutRecord>)readFromStorage(StorageType.CHECKOUTBOOK);
 	}
 	
 	/////load methods - these place test data into the storage area
@@ -81,8 +77,8 @@ public class DataAccessFacade implements DataAccess {
 		saveToStorage(StorageType.USERS, users);
 	}
 	
-	static void loadCheckoutBookMap(List<CheckoutBook> checkoutBookList) {
-		HashMap<String, CheckoutBook> checkoutBook = new HashMap<String, CheckoutBook>();
+	static void loadCheckoutBookMap(List<CheckoutRecord> checkoutBookList) {
+		HashMap<String, CheckoutRecord> checkoutBook = new HashMap<String, CheckoutRecord>();
 		checkoutBookList.forEach(checkout -> checkoutBook.put(checkout.getMemberId(), checkout));
 		saveToStorage(StorageType.CHECKOUTBOOK, checkoutBook);
 	}
@@ -110,27 +106,22 @@ public class DataAccessFacade implements DataAccess {
 		}
 	}
 	
-	public CheckoutBook addCheckoutBook(String memberID, String bookID) {
+	public CheckoutRecord addCheckoutBook(CheckoutRecord record) {
 		
-		HashMap<String,Book> listBook = readBooksMap();
-		HashMap<String,CheckoutBook> listCheck = readCheckoutBookMap();
+		HashMap<String,CheckoutRecord> listCheck = readCheckoutBookMap();
 		
-		Book book = listBook.get(bookID);
-		BookCopy copy = new BookCopy(book, book.getNumCopies() - 1);
-		CheckoutRecordEntry entry = new CheckoutRecordEntry(LocalDate.now(), LocalDate.now().plusDays(book.getMaxCheckoutLength()), copy);
-		CheckoutBook check = new CheckoutBook(memberID, entry);
-		
-		List<CheckoutBook> checkoutBookList = new ArrayList<>();
-		for (CheckoutBook checkB : listCheck.values()) {
+		List<CheckoutRecord> checkoutBookList = new ArrayList<>();
+		for (CheckoutRecord checkB : listCheck.values()) {
 			checkoutBookList.add(checkB);
 		}
 		
-		checkoutBookList.add(check);
+		checkoutBookList.add(record);
 		System.out.println(checkoutBookList);
 		System.out.println("Checkoutbook SAVED!");
+		System.out.println(checkoutBookList.size());
 		loadCheckoutBookMap(checkoutBookList);
 		
-		return check;
+		return record;
 	}
 	
 	static Object readFromStorage(StorageType type) {
@@ -181,6 +172,15 @@ public class DataAccessFacade implements DataAccess {
 			return "(" + first.toString() + ", " + second.toString() + ")";
 		}
 		private static final long serialVersionUID = 5399827794066637059L;
+	}
+
+
+
+	@Override
+	public void saveBook(Book book) {
+		HashMap<String, Book> books = readBooksMap();
+		books.put(book.getIsbn(), book);
+		saveToStorage(StorageType.BOOKS, books);
 	}
 	
 }

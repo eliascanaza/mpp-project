@@ -9,8 +9,8 @@ import business.Address;
 import business.Author;
 import business.Book;
 import business.BookCopy;
-import business.CheckoutBook;
-import business.CheckoutRecordEntry;
+import business.CheckoutRecord;
+import business.CheckoutEntry;
 import business.LibraryMember;
 
 /**
@@ -118,10 +118,9 @@ public class TestData {
 	};
 	
 	@SuppressWarnings("serial")
-	List<CheckoutBook> allCheckoutBooks = new ArrayList<CheckoutBook>() {
+	List<CheckoutRecord> allCheckoutBooks = new ArrayList<CheckoutRecord>() {
 		{
-			add(new CheckoutBook("1001", new CheckoutRecordEntry(LocalDate.now(), LocalDate.now(), new BookCopy(new Book("23-11451", "The Big Fish", 21, Arrays.asList(allAuthors.get(0), allAuthors.get(1))), 1))));
-			add(new CheckoutBook("1002", new CheckoutRecordEntry(LocalDate.now(), LocalDate.now(), new BookCopy(new Book("23-11452", "The Big Fish 2", 21, Arrays.asList(allAuthors.get(0), allAuthors.get(1))), 1))));
+			add(new CheckoutRecord("1001", new CheckoutEntry(LocalDate.now(), LocalDate.now().plusDays(7), new BookCopy(new Book("23-11451", "The Big Fish", 21, Arrays.asList(allAuthors.get(0), allAuthors.get(1))), 1))));
 		}
 	};
 }

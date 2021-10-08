@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +26,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
 
-import business.CheckoutBook;
+import business.CheckoutRecord;
 import business.ControllerInterface;
+import business.LibrarySystemException;
 import business.SystemController;
-import dataaccess.DataAccess;
-import dataaccess.DataAccessFacade;
 
 public class CheckoutBookWindow extends JFrame implements LibWindow {
 
@@ -57,9 +57,8 @@ public class CheckoutBookWindow extends JFrame implements LibWindow {
 	private JScrollPane scrollPane;
 	private JTable table;
 	
-	private List<CheckoutBook> listCheckout;
+	private List<CheckoutRecord> listCheckout;
 	private List<String[]> listCheck;
-	private DataAccess da;
 	
 	private static final int SCREEN_WIDTH = 640;
 	private static final int SCREEN_HEIGHT = 480;
@@ -99,15 +98,11 @@ public class CheckoutBookWindow extends JFrame implements LibWindow {
     		mainPanel.add(middleHalf, BorderLayout.CENTER);
     		mainPanel.add(lowerHalf, BorderLayout.SOUTH);
     		getContentPane().add(mainPanel);
-    		isInitialized(true);
-    		pack();
-    		//setSize(660, 500);
     }
     
     private void initInstances() {
     	ci = new SystemController();
     	listCheckout = ci.allCheckoutBook();
-    	da = new DataAccessFacade();
     	
     	tableModel = new CustomTableModel();
     	listCheck = new ArrayList<>();
@@ -225,20 +220,35 @@ public class CheckoutBookWindow extends JFrame implements LibWindow {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if(getMemberId().isEmpty() || getISBN().isEmpty()) {
-						displayMessage("The fields should be notempty.");
-					}else if(!ci.existsMemberId(getMemberId())){
-						displayMessage("Member ID is not found.");
-					}else if(!ci.existsBookId(getISBN())) {
-						displayMessage("Book ID is not found.");
-					}else {
-						addDataTable(da.addCheckoutBook(getMemberId(), getISBN()));
+					try {
+						if(!validateCheckoutBook(getMemberId(), getISBN())){
+							displayMessage("Book ID has been carried with the Member ID before.");
+						}else {
+							addDataTable(ci.checkoutBook(getMemberId(), getISBN()));
+							displayMessage("Checkout Record Saved!");
+						}
+					} catch (LibrarySystemException e1) {
+						displayMessage(e1.getMessage());
 					}
 				}
+
 			});
     	}
     	
-    	private void addDataTable(CheckoutBook check) {
+    	private boolean validateCheckoutBook(String memberId, String isbn) {
+    		System.out.println("total dato: "+tableModel.getRowCount());
+    		System.out.println("memberId: "+memberId+"-"+isbn);
+    		for (int count = 0; count < tableModel.getRowCount(); count++){
+    			System.out.println("value: "+tableModel.getValueAt(count, 0) + "."+tableModel.getValueAt(count, 1));
+    			  if(memberId.equals(tableModel.getValueAt(count, 0).toString()) && 
+    					  isbn.equals(tableModel.getValueAt(count, 1).toString())){
+    				  return false;
+    			  }
+    			}
+			return true;
+		}
+    	
+    	private void addDataTable(CheckoutRecord check) {
     		listCheck.clear();
     		
     		String[] checkItem = {
@@ -256,12 +266,12 @@ public class CheckoutBookWindow extends JFrame implements LibWindow {
     		JPanel panel = new JPanel();
             panel.setBorder(BorderFactory.createTitledBorder( BorderFactory.createEtchedBorder(), "Checkout book records", TitledBorder.CENTER, TitledBorder.TOP));
             
-            for(CheckoutBook check: listCheckout) {
+            for(CheckoutRecord check: listCheckout) {
             	String[] checkItem = {
             			check.getMemberId(), 
             			check.getCheckoutEntry().getBookCopy().getBook().getIsbn(),
-            			check.getCheckoutEntry().getCheckoutDate().toString(),
-            			check.getCheckoutEntry().getDueDate().toString()};
+            			check.getCheckoutEntry().getCheckoutDate().format(DateTimeFormatter.ofPattern("dd-MMM-yy")).toString(),
+            			check.getCheckoutEntry().getDueDate().format(DateTimeFormatter.ofPattern("dd-MMM-yy")).toString()};
             	
             	listCheck.add(checkItem);
             }	

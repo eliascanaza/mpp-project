@@ -3,12 +3,9 @@ package business;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-
-import dataaccess.DataAccess;
-import dataaccess.DataAccessFacade;
-
 final public class LibraryMember extends Person implements Serializable {
 	private String memberId;
+	private CheckoutRecord record;
 	
 	public LibraryMember(String memberId, String fname, String lname, String tel,Address add) {
 		super(fname,lname, tel, add);
@@ -20,7 +17,15 @@ final public class LibraryMember extends Person implements Serializable {
 		return memberId;
 	}
 
-	
+	public CheckoutRecord checkout(BookCopy copy, LocalDate today, LocalDate dueDate) {
+		copy.changeAvailability();
+		
+		CheckoutEntry entry = new CheckoutEntry(today, dueDate, copy);
+		record = new CheckoutRecord(memberId, entry);
+		record.addEntry(entry);
+		
+		return record;
+	}
 	
 	@Override
 	public String toString() {

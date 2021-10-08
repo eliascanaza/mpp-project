@@ -3,13 +3,13 @@ package business;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public class CheckoutRecordEntry implements Serializable{
+public class CheckoutEntry implements Serializable{
 	
 	private LocalDate checkoutDate;
 	private LocalDate dueDate;
 	private BookCopy bookCopy;
 	
-	public CheckoutRecordEntry(LocalDate checkoutDate, LocalDate dueDate, BookCopy bookCopy) {
+	public CheckoutEntry(LocalDate checkoutDate, LocalDate dueDate, BookCopy bookCopy) {
 		super();
 		this.checkoutDate = checkoutDate;
 		this.dueDate = dueDate;
