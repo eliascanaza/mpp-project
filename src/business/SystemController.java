@@ -26,6 +26,10 @@ public class SystemController implements ControllerInterface {
 		currentAuth = map.get(id).getAuthorization();
 		
 	}
+	//Added logout
+	public void logout() {
+		this.currentAuth = null;
+	}
 	@Override
 	public List<String> allMemberIds() {
 		DataAccess da = new DataAccessFacade();
@@ -43,6 +47,12 @@ public class SystemController implements ControllerInterface {
 	}
 	
 	@Override
+	public void saveLibraryMember(LibraryMember libraryMember) {
+		DataAccess da = new DataAccessFacade();
+		da.saveNewMember(libraryMember);
+	}
+	
+	@Override
 	public List<CheckoutRecord> allCheckoutBook() {
 		DataAccess da = new DataAccessFacade();
 		List<CheckoutRecord> retval = new ArrayList<>();
@@ -52,6 +62,14 @@ public class SystemController implements ControllerInterface {
 		}
 		
 		return retval;
+	}
+	
+		@Override
+	public List<LibraryMember> getAllLibraryMember() {
+		DataAccessFacade da = new DataAccessFacade();
+		HashMap<String, LibraryMember> libmem = da.readMemberMap();
+		System.out.println(libmem);
+		return null;
 	}
 	
 	@Override
@@ -89,6 +107,11 @@ public class SystemController implements ControllerInterface {
 	private LibraryMember getLibraryMember(String id) {
 		DataAccess da = new DataAccessFacade();
 		return da.readMemberMap().get(id);
+	}
+	
+	@Override
+	public void saveLibraryMember(List<LibraryMember> libraryMember) {
+		DataAccessFacade.loadMemberMap(libraryMember);
 	}
 	
 	@Override

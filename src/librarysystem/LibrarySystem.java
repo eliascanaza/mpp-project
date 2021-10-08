@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 
 import business.ControllerInterface;
 import business.SystemController;
+import dataaccess.Auth;
 
 
 public class LibrarySystem extends JFrame implements LibWindow {
@@ -25,8 +26,8 @@ public class LibrarySystem extends JFrame implements LibWindow {
 	public final static LibrarySystem INSTANCE =new LibrarySystem();
 	JPanel mainPanel;
 	JMenuBar menuBar;
-    JMenu options;
-    JMenuItem login, allBookIds, allMemberIds, addLibraryMember, checkoutBook, addBookCopy; 
+    JMenu options, adminOptions, librarianOptions;
+    JMenuItem login, logout, allBookIds, allMemberIds, checkoutBook, addBookCopy, addBooks, addMember, checkOutBook; 
     String pathToImage;
     private boolean isInitialized = false;
     
@@ -37,7 +38,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
 		AllBookIdsWindow.INSTANCE,
 		AddBookCopyWindow.INSTANCE,
 		CheckoutBookWindow.INSTANCE,
-		AddLibraryMemberWindow.INSTANCE
+		AddLibraryMember.INSTANCE  // added new instance
 	};
     	
 	public static void hideAllWindows() {
@@ -93,33 +94,147 @@ public class LibrarySystem extends JFrame implements LibWindow {
  	   allBookIds.addActionListener(new AllBookIdsListener());
  	   allMemberIds = new JMenuItem("All Member Ids");
  	   allMemberIds.addActionListener(new AllMemberIdsListener());
- 	   addLibraryMember = new JMenuItem("Add Library Member");
- 	   addLibraryMember.addActionListener(new AddLibraryMemberListener());
- 	   checkoutBook = new JMenuItem("Checkout Book");
- 	   checkoutBook.addActionListener(new CheckoutBookListener());
- 	   addBookCopy = new JMenuItem("Add Book Copy");
- 	   addBookCopy.addActionListener(new AddBookCopyListener());
+// 	   checkoutBook = new JMenuItem("Checkout Book");
+// 	   checkoutBook.addActionListener(new CheckoutBookListener());
+// 	   addBookCopy = new JMenuItem("Add Book Copy");
+// 	   addBookCopy.addActionListener(new AddBookCopyListener());
  	   
  	   options.add(login);
  	   options.add(allBookIds);
  	   options.add(allMemberIds);
- 	   options.add(addLibraryMember);
- 	   options.add(checkoutBook);
- 	   options.add(addBookCopy);
+ 	  // options.add(checkoutBook);
+ 	   //options.add(addBookCopy);
+    }
+	
+	/**
+     * This is to create admin menu for user with admin auth
+     */
+    private void addItemsInAdminMenu() {
+       adminOptions = new JMenu("Admin Menu");  
+  	   menuBar.add(adminOptions);
+  	   
+  	   addBooks = new JMenuItem("Add Books");
+  	   addBooks.addActionListener(new LoginListener());
+  	   addMember = new JMenuItem("Add Member");
+  	   addMember.addActionListener(new addNewLibraryMember());
+  	   
+  	   addBookCopy = new JMenuItem("Add Book Copy");
+  	   addBookCopy.addActionListener(new AddBookCopyListener());
+  	   
+  	   adminOptions.add(addBooks);
+  	   adminOptions.add(addMember);
+  	   adminOptions.add(addBookCopy);
+  	   
+     }
+    
+	
+    public void updateMenuBarAfterLogin() {
+   
+             	menuBar.remove(options);
+        	if(SystemController.currentAuth == Auth.ADMIN) {
+        		menuBar.remove(adminOptions);	
+        	}
+        	else if(SystemController.currentAuth == Auth.LIBRARIAN) {
+        		menuBar.remove(librarianOptions);
+        	}
+        	else if(SystemController.currentAuth == Auth.BOTH) {
+        		menuBar.remove(adminOptions);
+        		menuBar.remove(librarianOptions);
+        	}
+      	   
+      	   options = new JMenu("Options");  
+    	   menuBar.add(options);
+      	   
+    	   logout = new JMenuItem("Logout");
+      	   allBookIds = new JMenuItem("All Book Ids");
+      	   allMemberIds = new JMenuItem("All Member Ids");
+      	   
+      	   
+      	   logout.addActionListener(new LogoutListner());
+      	   allBookIds.addActionListener(new AllBookIdsListener());	
+      	   allMemberIds.addActionListener(new AllMemberIdsListener());
+      	  
+      	   options.add(logout);
+      	   options.add(allBookIds);
+      	   options.add(allMemberIds);
+      	   
+      	   if(SystemController.currentAuth == Auth.ADMIN) {
+        	   addItemsInAdminMenu();
+      	 	}
+      	   else if(SystemController.currentAuth == Auth.LIBRARIAN) {
+      		   addItemsInLibrarianmenu();
+      	   }
+      	   else if(SystemController.currentAuth == Auth.BOTH) {
+      	  	   addItemsInAdminMenu();
+      	  	   addItemsInLibrarianmenu();
+      	   }
+        }
+    
+    /**
+     * This is to create Librarian menu for user with librarian auth
+     */
+    
+    // 
+    private void addItemsInLibrarianmenu() {
+    	librarianOptions = new JMenu("Librarian Menu");
+    	menuBar.add(librarianOptions);
+    	
+    	checkOutBook = new JMenuItem("Check Out Books");
+    	checkOutBook.addActionListener(new CheckoutBookListener());
+    	
+    	librarianOptions.add(checkOutBook);
+    	
     }
     
+    /**
+     * This is to update the UI of the main LibrarySystem
+     */
+    
+    public void updateUiAccordingToAuth(Auth auth) {
+    	if(auth == (Auth.ADMIN)) {
+    		addItemsInAdminMenu();
+    	}
+    	else if(auth == Auth.LIBRARIAN) {
+    		addItemsInLibrarianmenu();
+    	}
+    	else if(auth == Auth.BOTH) {
+    		addItemsInAdminMenu();
+    		addItemsInLibrarianmenu();
+    	}
+    }
+
+	
     class LoginListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
-			LoginWindow.INSTANCE.init();
-			Util.centerFrameOnDesktop(LoginWindow.INSTANCE);
+			
+			if(!LoginWindow.INSTANCE.isInitialized()) {
+				LoginWindow.INSTANCE.init();
+				LoginWindow.INSTANCE.pack();
+				LoginWindow.INSTANCE.isInitialized(true);
+			}
+			LoginWindow.INSTANCE.clear();
 			LoginWindow.INSTANCE.setVisible(true);
+			
+			Util.centerFrameOnDesktop(LoginWindow.INSTANCE);
+		}
+    }
+	class LogoutListner implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			SystemController.currentAuth = null;
+			Util.centerFrameOnDesktop(LoginWindow.INSTANCE);
+			init();
+			LibrarySystem.INSTANCE.setVisible(true);
 			
 		}
     	
     }
+
     class AllBookIdsListener implements ActionListener {
 
 		@Override
@@ -148,16 +263,18 @@ public class LibrarySystem extends JFrame implements LibWindow {
 
     	@Override
 		public void actionPerformed(ActionEvent e) {
-			LibrarySystem.hideAllWindows();
-			AllMemberIdsWindow.INSTANCE.init();
-			AllMemberIdsWindow.INSTANCE.pack();
-			AllMemberIdsWindow.INSTANCE.setVisible(true);
+    		
+    		
+    		LibrarySystem.hideAllWindows();
 			
-			
-			LibrarySystem.hideAllWindows();
-			AllBookIdsWindow.INSTANCE.init();
+			if(!AllMemberIdsWindow.INSTANCE.isInitialized()) {
+				AllMemberIdsWindow.INSTANCE.init();
+				AllMemberIdsWindow.INSTANCE.pack();
+				AllMemberIdsWindow.INSTANCE.isInitialized(true);
+			}
 			
 			List<String> ids = ci.allMemberIds();
+			
 			Collections.sort(ids);
 			StringBuilder sb = new StringBuilder();
 			for(String s: ids) {
@@ -165,31 +282,27 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			}
 			System.out.println(sb.toString());
 			AllMemberIdsWindow.INSTANCE.setData(sb.toString());
-			AllMemberIdsWindow.INSTANCE.pack();
-			//AllMemberIdsWindow.INSTANCE.setSize(660,500);
-			Util.centerFrameOnDesktop(AllMemberIdsWindow.INSTANCE);
 			AllMemberIdsWindow.INSTANCE.setVisible(true);
 			
-			
+			Util.centerFrameOnDesktop(AllMemberIdsWindow.INSTANCE);
 		}
     	
     }
-    
-    class AddLibraryMemberListener implements ActionListener {
-
+	
+	class addNewLibraryMember implements ActionListener {
     	@Override
 		public void actionPerformed(ActionEvent e) {
 			LibrarySystem.hideAllWindows();
 			
-			if(!AddLibraryMemberWindow.INSTANCE.isInitialized()) {
-				AddLibraryMemberWindow.INSTANCE.init();
-				AddLibraryMemberWindow.INSTANCE.pack();
-				AddLibraryMemberWindow.INSTANCE.isInitialized(true);
+			if(!AddLibraryMember.INSTANCE.isInitialized()) {
+				AddLibraryMember.INSTANCE.init();
+				AddLibraryMember.INSTANCE.pack();
+				AddLibraryMember.INSTANCE.isInitialized(true);
 			}
-			AddLibraryMemberWindow.INSTANCE.clear();
-			AddLibraryMemberWindow.INSTANCE.setVisible(true);
+			AddLibraryMember.INSTANCE.clear();
+			AddLibraryMember.INSTANCE.setVisible(true);
 			
-			Util.centerFrameOnDesktop(AddLibraryMemberWindow.INSTANCE);
+			Util.centerFrameOnDesktop(AddLibraryMember.INSTANCE);
 		}
     	
     }

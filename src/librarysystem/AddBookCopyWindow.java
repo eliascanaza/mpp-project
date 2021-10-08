@@ -117,7 +117,7 @@ public class AddBookCopyWindow extends JFrame implements LibWindow {
     		topPanel = new JPanel();
     		JPanel intPanel = new JPanel(new BorderLayout());
     		intPanel.add(Box.createRigidArea(new Dimension(0,20)), BorderLayout.NORTH);
-    		JLabel checkoutLabel = new JLabel("Checkout Book");
+    		JLabel checkoutLabel = new JLabel("Add book copy");
     		Util.adjustLabelFont(checkoutLabel, Color.BLUE.darker(), true);
     		intPanel.add(checkoutLabel, BorderLayout.CENTER);
     		topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));

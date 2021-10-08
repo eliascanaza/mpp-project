@@ -17,13 +17,13 @@ import javax.swing.SwingConstants;
 import javax.swing.JOptionPane;
 
 import business.ControllerInterface;
-
+import business.LoginException;
 import business.SystemController;
 
 
 public class LoginWindow extends JFrame implements LibWindow {
     public static final LoginWindow INSTANCE = new LoginWindow();
-	
+	public SystemController systemController = new SystemController();
 	private boolean isInitialized = false;
 	
 	private JPanel mainPanel;
@@ -180,13 +180,43 @@ public class LoginWindow extends JFrame implements LibWindow {
     	private void addBackButtonListener(JButton butn) {
     		butn.addActionListener(evt -> {
     			LibrarySystem.hideAllWindows();
+    			if(SystemController.currentAuth != null) {
+    				LibrarySystem.INSTANCE.init();
+    				LibrarySystem.INSTANCE.updateUiAccordingToAuth(systemController.currentAuth);
+        			LibrarySystem.INSTANCE.updateMenuBarAfterLogin();
+    			}
     			LibrarySystem.INSTANCE.setVisible(true);
     		});
     	}
     	
     	private void addLoginButtonListener(JButton butn) {
     		butn.addActionListener(evt -> {
-    			JOptionPane.showMessageDialog(this,"Successful Login");
+    			String userN = username.getText().toString();
+    			String pass = password.getText().toString();
+    			
+    			try {
+					systemController.login(userN, pass);
+					username.setText("");
+					password.setText("");
+					
+					JOptionPane.showMessageDialog(this,"Successful Login");
+				} catch (LoginException e) {
+					e.printStackTrace();
+	    			JOptionPane.showMessageDialog(this,"Login Failed");
+	    			
+					System.out.println("error :" +e.getMessage());
+				}
+    			
+    			
+    			
+    		});
+    	}
+    	
+    	private void addLogoutButtonListener(JButton butn) {
+    		butn.addActionListener(evt -> {
+    			systemController.logout();
+    			SystemController.currentAuth = null;
+    			JOptionPane.showMessageDialog(this,"Logout..!!");
     				
     		});
     	}
