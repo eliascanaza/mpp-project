@@ -4,6 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -13,20 +17,26 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.TableColumn;
 
+import business.CheckoutBook;
+import business.ControllerInterface;
+import business.SystemController;
+import dataaccess.DataAccess;
+import dataaccess.DataAccessFacade;
 
-public class CheckoutBook extends JFrame implements LibWindow {
+public class CheckoutBookWindow extends JFrame implements LibWindow {
 
-	public static final CheckoutBook INSTANCE = new CheckoutBook();
+	public static final CheckoutBookWindow INSTANCE = new CheckoutBookWindow();
 	
 	private boolean isInitialized = false;
+	private ControllerInterface ci;
 	
 	private JPanel mainPanel;
 	private JPanel upperHalf;
@@ -43,9 +53,22 @@ public class CheckoutBook extends JFrame implements LibWindow {
 	private JTextField isbn;
 	private JLabel label;
 	private JButton checkoutButton;
+	private CustomTableModel tableModel;
+	private JScrollPane scrollPane;
+	private JTable table;
 	
+	private List<CheckoutBook> listCheckout;
+	private List<String[]> listCheck;
+	private DataAccess da;
 	
-	
+	private static final int SCREEN_WIDTH = 640;
+	private static final int SCREEN_HEIGHT = 480;
+	private static final int TABLE_WIDTH = (int) (0.75 * SCREEN_WIDTH);
+    private static final int DEFAULT_TABLE_HEIGHT = (int) (0.75 * SCREEN_HEIGHT);
+    private final float [] COL_WIDTH_PROPORTIONS =
+    	{0.25f, 0.25f, 0.25f, 0.25f};
+    private final String[] DEFAULT_COLUMN_HEADERS 
+	   = { "Member ID", "ISBN", "Checkout date", "Due Data" };
 	
 	public boolean isInitialized() {
 		return isInitialized;
@@ -59,9 +82,11 @@ public class CheckoutBook extends JFrame implements LibWindow {
 	}
 	
 	/* This class is a singleton */
-    private CheckoutBook () {}
+    private CheckoutBookWindow () {}
     
-    public void init() {     		
+    public void init() {     	
+    		
+    		initInstances();
     		mainPanel = new JPanel();
     		defineUpperHalf();
     		defineMiddleHalf();
@@ -77,10 +102,18 @@ public class CheckoutBook extends JFrame implements LibWindow {
     		isInitialized(true);
     		pack();
     		//setSize(660, 500);
-
-    	
     }
-    private void defineUpperHalf() {
+    
+    private void initInstances() {
+    	ci = new SystemController();
+    	listCheckout = ci.allCheckoutBook();
+    	da = new DataAccessFacade();
+    	
+    	tableModel = new CustomTableModel();
+    	listCheck = new ArrayList<>();
+	}
+    
+	private void defineUpperHalf() {
     		
     		upperHalf = new JPanel();
     		upperHalf.setLayout(new BorderLayout());
@@ -167,7 +200,7 @@ public class CheckoutBook extends JFrame implements LibWindow {
     		topText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
     		bottomText.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));		
     		
-    		isbn = new JPasswordField(10);
+    		isbn = new JTextField(10);
     		label = new JLabel("ISBN");
     		label.setFont(Util.makeSmallFont(label.getFont()));
     		topText.add(isbn);
@@ -187,24 +220,94 @@ public class CheckoutBook extends JFrame implements LibWindow {
     	}
     	
     	private void validaCheckoutBookButtonListener(JButton butn) {
-    		butn.addActionListener(evt -> {
-    			JOptionPane.showMessageDialog(this,"Successful Validation");
-    				
-    		});
+    		
+    		butn.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if(getMemberId().isEmpty() || getISBN().isEmpty()) {
+						displayMessage("The fields should be notempty.");
+					}else if(!ci.existsMemberId(getMemberId())){
+						displayMessage("Member ID is not found.");
+					}else if(!ci.existsBookId(getISBN())) {
+						displayMessage("Book ID is not found.");
+					}else {
+						addDataTable(da.addCheckoutBook(getMemberId(), getISBN()));
+					}
+				}
+			});
+    	}
+    	
+    	private void addDataTable(CheckoutBook check) {
+    		listCheck.clear();
+    		
+    		String[] checkItem = {
+        			check.getMemberId(), 
+        			check.getCheckoutEntry().getBookCopy().getBook().getIsbn(),
+        			check.getCheckoutEntry().getCheckoutDate().toString(),
+        			check.getCheckoutEntry().getDueDate().toString()};
+        	
+        	listCheck.add(checkItem);
+        	setValuesTableCheckoutBook(tableModel, listCheck);
+			table.updateUI();
     	}
     	
     	private void tableCheckoutBook() {
     		JPanel panel = new JPanel();
             panel.setBorder(BorderFactory.createTitledBorder( BorderFactory.createEtchedBorder(), "Checkout book records", TitledBorder.CENTER, TitledBorder.TOP));
-
-    		String[][] rec = {
-			   { "1", "00011", "12/12/2020", "12/12/2020" },
-			};
-			String[] header = { "Member ID", "ISBN", "Checkout date", "Due Data" };
-			JTable table = new JTable(rec, header);
-			panel.add(new JScrollPane(table));
+            
+            for(CheckoutBook check: listCheckout) {
+            	String[] checkItem = {
+            			check.getMemberId(), 
+            			check.getCheckoutEntry().getBookCopy().getBook().getIsbn(),
+            			check.getCheckoutEntry().getCheckoutDate().toString(),
+            			check.getCheckoutEntry().getDueDate().toString()};
+            	
+            	listCheck.add(checkItem);
+            }	
+            
+			table = new JTable(tableModel);
 			
+			scrollPane = new JScrollPane();
+			scrollPane.setPreferredSize(
+					new Dimension(TABLE_WIDTH, DEFAULT_TABLE_HEIGHT));
+			scrollPane.getViewport().add(table);
+			
+			createCustomColumns(table, TABLE_WIDTH,
+		            COL_WIDTH_PROPORTIONS, DEFAULT_COLUMN_HEADERS);
+			panel.add(scrollPane);
 			lowerPanel.add(panel);
+			
+			setValuesTableCheckoutBook(tableModel, listCheck);
+			table.updateUI();
+    	}
+    	
+    	private void setValuesTableCheckoutBook(CustomTableModel model, List<String[]> data) {
+    		model.setTableValues(data);
+    	}
+    	
+    	private void createCustomColumns(JTable table, int width, float[] proportions,
+    			  String[] headers) {
+    			table.setAutoCreateColumnsFromModel(false);
+    	        int num = headers.length;
+    	        for(int i = 0; i < num; ++i) {
+    	            TableColumn column = new TableColumn(i);
+    	            column.setHeaderValue(headers[i]);
+    	            column.setMinWidth(Math.round(proportions[i]*width));
+    	            table.addColumn(column);
+    	        }
+    		}
+    	
+    	private void displayMessage(String message) {
+    		JOptionPane.showMessageDialog(INSTANCE,message);
+    	}
+    	
+    	private String getMemberId() {
+    		return memberID.getText();
+    	}
+    	
+    	private String getISBN() {
+    		return isbn.getText();
     	}
 	
     	private static final long serialVersionUID = -4881509539494674087L;

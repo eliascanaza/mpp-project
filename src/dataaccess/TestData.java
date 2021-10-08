@@ -1,5 +1,6 @@
 package dataaccess;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,6 +8,9 @@ import java.util.List;
 import business.Address;
 import business.Author;
 import business.Book;
+import business.BookCopy;
+import business.CheckoutBook;
+import business.CheckoutRecordEntry;
 import business.LibraryMember;
 
 /**
@@ -27,6 +31,7 @@ public class TestData {
 		td.bookData();
 		td.libraryMemberData();
 		td.userData();
+		td.checkoutBook();
 		DataAccess da = new DataAccessFacade();
 		System.out.println(da.readBooksMap());
 		System.out.println(da.readUserMap());
@@ -40,6 +45,10 @@ public class TestData {
 		allBooks.get(2).addCopy();
 		allBooks.get(2).addCopy();
 		DataAccessFacade.loadBookMap(allBooks);
+	}
+	
+	public void checkoutBook() {
+		DataAccessFacade.loadCheckoutBookMap(allCheckoutBooks);
 	}
 	
 	public void userData() {
@@ -105,6 +114,14 @@ public class TestData {
 			add(new User("101", "xyz", Auth.LIBRARIAN));
 			add(new User("102", "abc", Auth.ADMIN));
 			add(new User("103", "111", Auth.BOTH));
+		}
+	};
+	
+	@SuppressWarnings("serial")
+	List<CheckoutBook> allCheckoutBooks = new ArrayList<CheckoutBook>() {
+		{
+			add(new CheckoutBook("1001", new CheckoutRecordEntry(LocalDate.now(), LocalDate.now(), new BookCopy(new Book("23-11451", "The Big Fish", 21, Arrays.asList(allAuthors.get(0), allAuthors.get(1))), 1))));
+			add(new CheckoutBook("1002", new CheckoutRecordEntry(LocalDate.now(), LocalDate.now(), new BookCopy(new Book("23-11452", "The Big Fish 2", 21, Arrays.asList(allAuthors.get(0), allAuthors.get(1))), 1))));
 		}
 	};
 }

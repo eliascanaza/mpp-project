@@ -10,5 +10,7 @@ public interface ControllerInterface {
 	public void login(String id, String password) throws LoginException;
 	public List<String> allMemberIds();
 	public List<String> allBookIds();
-	
+	public boolean existsMemberId(String id);
+	public boolean existsBookId(String id);
+	public List<CheckoutBook> allCheckoutBook();
 }

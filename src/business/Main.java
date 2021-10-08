@@ -19,9 +19,15 @@ public class Main {
 		Collection<LibraryMember> members = da.readMemberMap().values();
 		List<LibraryMember> mems = new ArrayList<>();
 		mems.addAll(members);
-		//implement
-		return null;
+		List<String> listZip = new ArrayList<>();
 		
+		for(LibraryMember member: mems) {
+			if(member.getAddress().getZip().contains("3")) {
+				listZip.add(member.getAddress().getZip());
+			}
+		}
+		
+		return listZip;
 	}
 	//Returns a list of all ids of  LibraryMembers that have an overdue book
 	public static List<String> allHavingOverdueBook() {
@@ -40,9 +46,15 @@ public class Main {
 		Collection<Book> books = da.readBooksMap().values();
 		List<Book> bs = new ArrayList<>();
 		bs.addAll(books);
-		//implement
-		return null;
+		List<String> listISBN = new ArrayList<>();
 		
+		for(Book book: bs) {
+			if(book.getAuthors().size() > 1) {
+				listISBN.add(book.getIsbn());
+			}
 		}
+		
+		return listISBN;	
+	}
 
 }

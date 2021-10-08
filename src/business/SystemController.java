@@ -41,5 +41,32 @@ public class SystemController implements ControllerInterface {
 		return retval;
 	}
 	
+	@Override
+	public List<CheckoutBook> allCheckoutBook() {
+		DataAccess da = new DataAccessFacade();
+		List<CheckoutBook> retval = new ArrayList<>();
+		
+		for (CheckoutBook check : da.readCheckoutBookMap().values()) {
+			System.out.println(check);
+			retval.add(check);
+		}
+		
+		return retval;
+	}
 	
+	public boolean existsMemberId(String id) {
+		List<String> listMemberID = allMemberIds();
+		for(String memberID: listMemberID) 
+			if(memberID.equals(id))
+				return true;
+		return false;
+	}
+	
+	public boolean existsBookId(String id) {
+		List<String> listBookID = allBookIds();
+		for(String bookID: listBookID) 
+			if(bookID.equals(id))
+				return true;
+		return false;
+	}
 }
