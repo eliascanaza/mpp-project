@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import business.Author;
 import business.Book;
 import business.BookCopy;
 import business.CheckoutRecord;
@@ -18,7 +19,7 @@ import business.LibraryMember;
 public class DataAccessFacade implements DataAccess {
 	
 	enum StorageType {
-		BOOKS, MEMBERS, USERS, CHECKOUTBOOK, BOOKCOPY;
+		BOOKS, MEMBERS, USERS, CHECKOUTBOOK, AUTHOR;
 	}
 	
 	public static final String OUTPUT_DIR = System.getProperty("user.dir") 
@@ -64,8 +65,9 @@ public class DataAccessFacade implements DataAccess {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public HashMap<String, BookCopy> readBookCopyMap() {
-		return (HashMap<String, BookCopy>)readFromStorage(StorageType.BOOKCOPY);
+	@Override
+	public HashMap<String, Author> readAuthorMap() {
+		return (HashMap<String, Author>)readFromStorage(StorageType.AUTHOR);
 	}
 	/////load methods - these place test data into the storage area
 	///// - used just once at startup  
@@ -77,10 +79,10 @@ public class DataAccessFacade implements DataAccess {
 		saveToStorage(StorageType.BOOKS, books);
 	}
 	
-	static void loadBookCopyMap(List<BookCopy> bookList) {
-		HashMap<String, BookCopy> copies = new HashMap<String, BookCopy>();
-		bookList.forEach(copy -> copies.put(copy.getBook().getIsbn()+"-"+copy.getCopyNum(), copy));
-		saveToStorage(StorageType.BOOKCOPY, copies);
+	static void loadAuthorMap(List<Author> bookList) {
+		HashMap<String, Author> authors = new HashMap<String, Author>();
+		bookList.forEach(author -> authors.put(author.getFirstName(), author));
+		saveToStorage(StorageType.AUTHOR, authors);
 	}
 	
 	static void loadUserMap(List<User> userList) {
@@ -194,14 +196,4 @@ public class DataAccessFacade implements DataAccess {
 		books.put(book.getIsbn(), book);
 		saveToStorage(StorageType.BOOKS, books);
 	}
-
-	@Override
-	public void saveBookCopy(BookCopy copy) {
-		HashMap<String, BookCopy> copies = readBookCopyMap();
-		copies.put(copy.getBook().getIsbn()+"-"+copy.getCopyNum(), copy);
-		saveToStorage(StorageType.BOOKCOPY, copies);
-	}
-
-	
-	
 }

@@ -32,10 +32,11 @@ public class TestData {
 		td.libraryMemberData();
 		td.userData();
 		td.checkoutBook();
-		td.bookCopy();
+		td.authorData();
 		DataAccess da = new DataAccessFacade();
 		System.out.println(da.readBooksMap());
 		System.out.println(da.readUserMap());
+		System.out.println(da.readAuthorMap());
 	}
 	///create books
 	public void bookData() {
@@ -52,12 +53,12 @@ public class TestData {
 		DataAccessFacade.loadCheckoutBookMap(allCheckoutBooks);
 	}
 	
-	public void bookCopy() {
-		DataAccessFacade.loadBookCopyMap(allBookCopies);
-	}
-	
 	public void userData() {
 		DataAccessFacade.loadUserMap(allUsers);
+	}
+	
+	public void authorData() {
+		DataAccessFacade.loadAuthorMap(allAuthors);
 	}
 	
 	//create library members

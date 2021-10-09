@@ -72,7 +72,7 @@ final public class Book implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "[book= isbn: " + isbn + ", maxLength: " + maxCheckoutLength + ", available: " + isAvailable()+", copies: "+copies.length+"]";
+		return "[book= isbn: " + isbn + ", title:"+title+", maxLength: " + maxCheckoutLength + ", available: " + isAvailable()+", copies: "+copies.length+"]";
 	}
 	
 	public int getNumCopies() {

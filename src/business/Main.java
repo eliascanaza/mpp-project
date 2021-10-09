@@ -8,9 +8,9 @@ import dataaccess.DataAccessFacade;
 public class Main {
 
 	public static void main(String[] args) {
-		System.out.println(allWhoseZipContains3());
-		System.out.println(allHavingOverdueBook());
-		System.out.println(allHavingMultipleAuthors());
+//		System.out.println(allWhoseZipContains3());
+//		System.out.println(allHavingOverdueBook());
+//		System.out.println(allHavingMultipleAuthors());
 		System.out.println(allBook());
 	}
 	//Returns a list of all ids of LibraryMembers whose zipcode contains the digit 3

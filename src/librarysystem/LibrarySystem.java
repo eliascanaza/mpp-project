@@ -94,16 +94,10 @@ public class LibrarySystem extends JFrame implements LibWindow {
  	   allBookIds.addActionListener(new AllBookIdsListener());
  	   allMemberIds = new JMenuItem("All Member Ids");
  	   allMemberIds.addActionListener(new AllMemberIdsListener());
-// 	   checkoutBook = new JMenuItem("Checkout Book");
-// 	   checkoutBook.addActionListener(new CheckoutBookListener());
-// 	   addBookCopy = new JMenuItem("Add Book Copy");
-// 	   addBookCopy.addActionListener(new AddBookCopyListener());
  	   
  	   options.add(login);
  	   options.add(allBookIds);
  	   options.add(allMemberIds);
- 	  // options.add(checkoutBook);
- 	   //options.add(addBookCopy);
     }
 	
 	/**
@@ -114,7 +108,7 @@ public class LibrarySystem extends JFrame implements LibWindow {
   	   menuBar.add(adminOptions);
   	   
   	   addBooks = new JMenuItem("Add Books");
-  	   addBooks.addActionListener(new LoginListener());
+  	   addBooks.addActionListener(new addBookListener());
   	   addMember = new JMenuItem("Add Member");
   	   addMember.addActionListener(new addNewLibraryMember());
   	   
@@ -303,6 +297,24 @@ public class LibrarySystem extends JFrame implements LibWindow {
 			AddLibraryMember.INSTANCE.setVisible(true);
 			
 			Util.centerFrameOnDesktop(AddLibraryMember.INSTANCE);
+		}
+    	
+    }
+	
+	class addBookListener implements ActionListener {
+    	@Override
+		public void actionPerformed(ActionEvent e) {
+			LibrarySystem.hideAllWindows();
+			
+			if(!AddBooksWindow.INSTANCE.isInitialized()) {
+				AddBooksWindow.INSTANCE.init();
+				AddBooksWindow.INSTANCE.pack();
+				AddBooksWindow.INSTANCE.isInitialized(true);
+			}
+			AddBooksWindow.INSTANCE.clear();
+			AddBooksWindow.INSTANCE.setVisible(true);
+			
+			Util.centerFrameOnDesktop(AddBooksWindow.INSTANCE);
 		}
     	
     }

@@ -83,6 +83,17 @@ public class SystemController implements ControllerInterface {
 		return retval;
 	}
 	
+	@Override
+	public List<String> allAuthors() {
+		DataAccess da = new DataAccessFacade();
+		List<String> retval = new ArrayList<>();
+		
+		for (Author author : da.readAuthorMap().values()) {
+			retval.add(author.getFirstName() + " " +author.getLastName());
+		}
+		return retval;
+	}
+	
 	public boolean searchMember(String id) {
 		List<String> listMemberID = allMemberIds();
 		for(String memberID: listMemberID) 
@@ -102,6 +113,11 @@ public class SystemController implements ControllerInterface {
 	private Book getBook(String id) {
 		DataAccess da = new DataAccessFacade();
 		return da.readBooksMap().get(id);
+	}
+	
+	private Author getAuthor(String name) {
+		DataAccess da = new DataAccessFacade();
+		return da.readAuthorMap().get(name);
 	}
 	
 	private LibraryMember getLibraryMember(String id) {
@@ -157,5 +173,27 @@ public class SystemController implements ControllerInterface {
 		book.addCopy();
 		da.saveBook(book);
 		System.out.println("Book Copy saved!");
+	}
+	@Override
+	public void saveBook(String ISBN, String title, String[] author, int MaxCheckoutLength, int numCopies) throws LibrarySystemException{
+		DataAccess da = new DataAccessFacade();
+		
+		if(ISBN.isEmpty() || title.isEmpty() || MaxCheckoutLength == 0 || numCopies == 0)
+			throw new LibrarySystemException("The fields should be notempty.");
+		
+		if(author.length == 0)
+			throw new LibrarySystemException("You need to choose Authors.");
+		
+		List<Author> authors = new ArrayList<>();
+		for(String nameAuthor: author) {
+			authors.add(getAuthor(nameAuthor));
+		}
+
+		Book book = new Book(ISBN, title, MaxCheckoutLength, authors);
+		for(int i = 0; i < numCopies; i++) {
+			book.addCopy();
+		}
+		da.saveBook(book);
+		System.out.println("Book saved!");
 	}
 }

@@ -9,6 +9,7 @@ public interface ControllerInterface {
 	public void login(String id, String password) throws LoginException;
 	public List<String> allMemberIds();
 	public List<String> allBookIds();
+	public List<String> allAuthors();
 	public void saveLibraryMember(LibraryMember libraryMember);
 	public void saveLibraryMember(List<LibraryMember> libraryMember);
 	public List<LibraryMember> getAllLibraryMember();
@@ -19,4 +20,5 @@ public interface ControllerInterface {
 	public List<Book> allBook();
 	public CheckoutRecord checkoutBook(String memberID, String bookID) throws LibrarySystemException;
 	public void logout();
+	public void saveBook(String ISBN, String title, String[] Author, int MaxCheckoutLength, int numCopies) throws LibrarySystemException;
 }
